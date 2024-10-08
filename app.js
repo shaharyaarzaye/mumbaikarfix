@@ -4,12 +4,18 @@ const ejsMate = require('ejs-mate');
 const app = express();
 const path = require('path');
 const User = require('./models/user')
+const Issue = require('./models/issues')
 
 mongoose.connect('mongodb://localhost:27017/users', {
     // useNewUrlParser: true,
     // useCreateIndex: true,
     // useUnifiedTopology: true
 });
+// mongoose.connect('mongodb://localhost:27017/issues', {
+//     // useNewUrlParser: true,
+//     // useCreateIndex: true,
+//     // useUnifiedTopology: true
+// });
 mongoose.connection.on('connected', () => {
     console.log('MongoDB connected');
 });
@@ -31,8 +37,12 @@ app.get('/', (req , res) => {
 app.get('/login' , (req , res) => {
     res.render('login')
 })
-app.post('/login' , (req , res) => {
-    
+app.post('/login' , async (req , res) => {
+    const {username , password} = req.body;
+    const userExists = await User.findOne({ username });
+        if (userExists) {
+            res.render('home' , {username});
+        }
 })
 
 
@@ -78,6 +88,16 @@ app.post('/', async (req, res) => {
     res.send('Request received');
 });
 
+
+app.get('/new' , (req , res) =>{
+    res.render('new')
+})
+
+app.post('/new' , (req,res) => {
+    const { issuetype , location , UploadImage} = req.body;
+    console.log(issuetype , location , UploadImage);
+    
+})
 
 
 
